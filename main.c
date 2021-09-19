@@ -1,6 +1,8 @@
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
+
 
 void showProcessMessage();
 void showProcessCreationMessage(pid_t IDOfTheCreatedProcess);
@@ -74,5 +76,8 @@ void startCodeForThirdProcess(){
 
 void startCodeForFourthProcess(){
     usleep(900);
-    createProcess();
+    if(createProcess() > 0){
+        char *args[2] = {"/bin/ls", NULL};
+        execv(args[0], args);
+    }
 }
