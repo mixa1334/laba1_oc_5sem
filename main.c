@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 
 void showProcessMessage();
@@ -15,15 +16,20 @@ void startCodeForFourthProcess();
 
 int main(){
     
+    int status;
+
     showProcessMessage();
 
     pid_t idOfSecondProcess = createProcess(), idOfThirdProcess;
 
     if(idOfSecondProcess > 0){
+        wait(&status);
         idOfThirdProcess = createProcess();
-        if(idOfThirdProcess == 0){
+        if(idOfThirdProcess > 0){
+            wait(&status);
+        }else if(idOfThirdProcess == 0){
             startCodeForThirdProcess();
-        }else if(idOfThirdProcess < 0){
+        }else{
             exit(EXIT_FAILURE);
         }
     }
@@ -59,8 +65,10 @@ pid_t createProcess(){
 }
 
 void startCodeForSecondProcess(){
+    int status;
     pid_t idOfFourthProcess = createProcess();
     if(idOfFourthProcess > 0){
+        wait(&status);
         createProcess();
     }else if(idOfFourthProcess == 0){
         startCodeForFourthProcess();
@@ -70,14 +78,16 @@ void startCodeForSecondProcess(){
 }
 
 void startCodeForThirdProcess(){
-    usleep(700);
+    int status;
     createProcess();
+    wait(&status);
 }
 
 void startCodeForFourthProcess(){
-    usleep(900);
+    int status;
     if(createProcess() > 0){
-        char *args[2] = {"/bin/ls", NULL};
+        wait(&status);
+        char *args[2] = {"/bin/ls", "-m", NULL};
         execv(args[0], args);
     }
 }
