@@ -79,15 +79,22 @@ void startCodeForSecondProcess(){
 
 void startCodeForThirdProcess(){
     int status;
-    createProcess();
-    wait(&status);
+    pid_t id = createProcess();
+    if(id > 0){
+        wait(&status);
+    }else if(id < 0){
+        exit(EXIT_FAILURE);
+    }
 }
 
 void startCodeForFourthProcess(){
     int status;
-    if(createProcess() > 0){
+    pid_t id = createProcess();
+    if(id > 0){
         wait(&status);
         char *args[2] = {"/bin/ls", "-m", NULL};
         execv(args[0], args);
+    }else if(id < 0){
+        exit(EXIT_FAILURE);
     }
 }
